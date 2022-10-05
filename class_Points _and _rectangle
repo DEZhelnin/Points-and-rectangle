@@ -1,0 +1,261 @@
+using ConsoleApp3;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp3
+{
+    
+    internal class Points
+    {
+        public double x;
+        public double y;
+        public double z;
+
+
+        public double X { get; set; }
+        public double Y { get => y; set => y = value; }
+        public double Z { get => z; set => z = value; }
+        public Points(double x, double y, double z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+        public double distance(Points A, Points B)
+        {
+            return Math.Sqrt(((A.x - B.x) * (A.x - B.x)) + ((A.y - B.y) * (A.y - B.y)) + ((A.z - B.z) * (A.z - B.z)));
+        }
+
+        public double distance_to_zero_point(Points A)
+        {
+            return Math.Sqrt((A.x * A.x) + (A.y * A.y) + (A.z * A.z));
+        }
+
+        public void line(Points A, Points B)
+        {
+            double k1 = B.x - A.x;
+            double k2 = B.y - A.y;
+            double k3 = B.z - A.z;
+            if (k1 != 0 || k2 != 0 || k3 != 0)
+            {
+                if (k1== 0 && k2 == 0)
+                {
+                    Console.WriteLine("x={0} y ={1} z-любое", A.x, A.y);
+                }
+                else if (k1 == 0 && k3 == 0)
+                {
+                    Console.WriteLine("x={0} z ={1} y-любое", A.x, A.z);
+                }
+                else if (k2 == 0 && k3 == 0)
+                {
+                    Console.WriteLine("y={0} z ={1} x-любое", A.y, A.z);
+                }
+                else if (k1 == 0)
+                {
+                    Console.Write("x={0} ", A.x);
+                    if (A.y > 0) Console.Write("y-{0}", A.y);
+                    else if (A.y == 0) Console.Write("y");
+                    else Console.Write("y+{0}", Math.Abs(A.y));
+                    Console.Write("/{0}=", k2);
+                    if (A.z > 0) Console.Write("z-{0}", A.z);
+                    else if (A.z == 0) Console.Write("z");
+                    else Console.Write("z+{0}", Math.Abs(A.z));
+                    Console.Write("/{0}", k3);
+                }
+                else if (k2 == 0)
+                {
+                    Console.Write("y={0} ", A.y);
+                    if (A.x > 0) Console.Write("x-{0}", A.x);
+                    else if (A.x == 0) Console.Write("x");
+                    else Console.Write("x+{0}", Math.Abs(A.x));
+                    Console.Write("/{0}=", k1);
+                    if (A.z > 0) Console.Write("z-{0}", A.z);
+                    else if (A.z == 0) Console.Write("z");
+                    else Console.Write("z+{0}", Math.Abs(A.z));
+                    Console.Write("/{0}", k3);
+                }
+                else if (k3 == 0)
+                {
+                    Console.Write("z={0} ", A.z);
+                    if (A.x > 0) Console.Write("x-{0}", A.x);
+                    else if (A.x == 0) Console.Write("x");
+                    else Console.Write("x+{0}", Math.Abs(A.x));
+                    Console.Write("/{0=}", k1);
+                    if (A.y > 0) Console.Write("y-{0}", A.y);
+                    else if (A.y == 0) Console.Write("y");
+                    else Console.Write("y+{0}", Math.Abs(A.y));
+                    Console.Write("/{0}", k2);
+                }
+            }
+            else { Console.WriteLine("ввели две одинаковые точки"); }
+            Console.WriteLine();   
+
+        }
+        public void plane(Points A, Points B, Points C)
+        {
+            double a1 = B.x - A.x;
+            double a2 = B.y - A.y;
+            double a3 = B.z - A.z;
+            double b1 = C.x - A.x;
+            double b2 = C.y - A.y;
+            double b3 = C.z - A.z;
+            double a = (a2 * b3) - (b2 * a3);
+            double b = -((a1 * b3) - (b1 * a3));
+            double c = (a1 * b2) - (b1 * a2);
+            double d = -(A.x * a) - (A.y * b) - (A.z * c);
+            if (a == 0 && b == 0 && c == 0)
+            {
+                Console.WriteLine("точки лежат на одной прямой");
+            }
+            else
+            {
+                if (a != 0)
+                {
+                    Console.Write("{0}x", a);
+                }
+                if (b != 0)
+                {
+                    if (b > 0) Console.Write("+{0}y", b);
+                    else Console.Write("{0}y", b);
+                }
+                if (c != 0)
+                {
+                    if (c > 0) Console.Write("+{0}z", c);
+                    else Console.Write("{0}z", c);
+                }
+                if (d != 0)
+                {
+                    if (d > 0) Console.Write("+{0}=0", d);
+                    else Console.Write("{0}=0", d);
+                }
+                Console.WriteLine();
+                
+            }
+        }
+
+        public bool relate_to_plane (Points A, Points B, Points C, Points D)
+        {
+            double a1 = B.x - A.x;
+            double a2 = B.y - A.y;
+            double a3 = B.z - A.z;
+            double b1 = C.x - A.x;
+            double b2 = C.y - A.y;
+            double b3 = C.z - A.z;
+            double a = (a2 * b3) - (b2 * a3);
+            double b = -((a1 * b3) - (b1 * a3));
+            double c = (a1 * b2) - (b1 * a2);
+            double d = -(A.x * a) - (A.y * b) - (A.z * c);
+            if (((D.x * a) + (D.y * b) + (D.z * c) + d) < 10 * double.Epsilon ) return true;
+            else return false;
+        }
+    }
+
+    internal class Rectangle : Points
+    {
+        Points A1 { get; set; }
+        Points A2 { get; set; }
+        Points A3 { get; set; }
+        Points A4 { get; set; }
+
+        public Rectangle(Points A, Points B, Points C, Points D)
+            : base(A.x, A.y, A.z)
+        {
+
+            if (D.relate_to_plane(A, B, C, D) == true)
+            {
+                if (((B.x - A.x) * (D.x - A.x)) + ((B.y - A.y) * (D.y - A.y)) + ((B.z - A.z) * (D.z - A.z)) < 10 * double.Epsilon)
+                {
+                    if (((B.x - A.x) * (C.x - B.x)) + ((B.y - A.y) * (C.y - B.y)) + ((B.z - A.z) * (C.z - B.z)) < 10 * double.Epsilon)
+                    {
+                        if (((C.x - D.x) * (C.x - B.x)) + ((C.y - D.y) * (C.y - B.y)) + ((C.z - D.z) * (C.z - B.z)) < 10 * double.Epsilon)
+                        {
+                            this.A1 = A;
+                            this.A2 = B;
+                            this.A3 = C;
+                            this.A4 = D;
+                            //Console.WriteLine("прямоугольник посторен");
+                        }
+                        else
+                        {
+                            Console.WriteLine("стороны не перпендикулярны");
+                            this.A1 = A;
+                            this.A2 = A;
+                            this.A3 = A;
+                            this.A4 = A;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("стороны не перпендикулярны");
+                        this.A1 = A;
+                        this.A2 = A;
+                        this.A3 = A;
+                        this.A4 = A;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("стороны не перпендикулярны");
+                    this.A1 = A;
+                    this.A2 = A;
+                    this.A3 = A;
+                    this.A4 = A;
+                }
+            }
+            else
+            {
+                Console.WriteLine("не лежат в одной плоскости");
+                this.A1 = A;
+                this.A2 = A;
+                this.A3 = A;
+                this.A4 = A;
+            }
+        }
+
+        public Rectangle(Points A, Points B, Points C)
+            : base(A.x, A.y, A.z)
+        {
+
+            Points D = new Points(0, 0, 0);
+            if (((B.x - A.x) * (C.x - B.x)) + ((B.y - A.y) * (C.y - B.y)) + ((B.z - A.z) * (C.z - B.z)) < 10 * double.Epsilon)
+            {
+                D.x = A.x + (C.x - B.x);
+                D.y = A.y + (C.y - B.y);
+                D.z = A.z + (C.z - B.z);
+                this.A1 = A;
+                this.A2 = B;
+                this.A3 = C;
+                this.A4 = D;
+                Console.WriteLine("прямоугольник построен, координаты D:({0},{1},{2})", D.x, D.y, D.z);
+
+            }
+            else
+            {
+                Console.WriteLine("стороны не перпендикулярны");
+                this.A1 = A;
+                this.A2 = A;
+                this.A3 = A;
+                this.A4 = A;
+            }
+        }
+
+        public double diagonal(Rectangle other)
+        {
+             return distance(A1, A3);
+        }
+
+        public double area(Rectangle other)
+        {
+            return (distance(A1,A2)*distance(A2,A3));   
+        }
+
+        public double perimeter(Rectangle other)
+        {
+            return (2*(distance(A1, A2) + distance(A2, A3)));
+        }
+    }
+}
